@@ -14,23 +14,19 @@ public class AttendanceService {
     public AttendanceService(AttendanceRepository attendanceRepository) {
         this.attendanceRepository = attendanceRepository;
     }
-
-    // Add Attendance
     public Attendance addAttendance(Attendance attendance) {
         return attendanceRepository.save(attendance);
     }
 
-    // Get All Attendance
+
     public List<Attendance> getAllAttendance() {
         return attendanceRepository.findAll();
     }
 
-    // Get Attendance By ID
     public Attendance getAttendanceById(Long id) {
         return attendanceRepository.findById(id).orElse(null);
     }
 
-    // Update Attendance
     public Attendance updateAttendance(Long id, Attendance attendance) {
 
         Attendance existingAttendance =
@@ -63,8 +59,6 @@ public class AttendanceService {
 
         return null;
     }
-
-    // Delete Attendance
     public void deleteAttendance(Long id) {
         attendanceRepository.deleteById(id);
     }

@@ -14,23 +14,17 @@ public class ExamService {
     public ExamService(ExamRepository examRepository) {
         this.examRepository = examRepository;
     }
-
-    // Add Exam
     public Exam addExam(Exam exam) {
         return examRepository.save(exam);
     }
 
-    // Get All Exams
     public List<Exam> getAllExams() {
         return examRepository.findAll();
     }
 
-    // Get Exam By ID
     public Exam getExamById(Long id) {
         return examRepository.findById(id).orElse(null);
     }
-
-    // Update Exam
     public Exam updateExam(Long id, Exam exam) {
 
         Exam existingExam =
@@ -72,7 +66,6 @@ public class ExamService {
         return null;
     }
 
-    // Delete Exam
     public void deleteExam(Long id) {
         examRepository.deleteById(id);
     }

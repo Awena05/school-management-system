@@ -228,7 +228,8 @@ function Exams() {
         </button>
 
         {editingId && (
-          <button type="button" onClick={cancelEdit}>
+          <button type="button" onClick={cancelEdit}
+          >
             Cancel
           </button>
         )}
@@ -276,6 +277,15 @@ function Exams() {
                     <button
                       type="button"
                       onClick={() => editExam(exam)}
+                      style={{
+                        background: "#2563eb",
+                        color: "white",
+                        border: "none",
+                        padding: "8px 12px",
+                        borderRadius: "6px",
+                        cursor: "pointer",
+                        marginRight: "8px",
+                      }}
                     >
                       Edit
                     </button>
@@ -283,6 +293,15 @@ function Exams() {
                     <button
                       type="button"
                       onClick={() => deleteExam(exam.id)}
+                      style={{
+                        background: "#dc2626",
+                        color: "white",
+                        border: "none",
+                        padding: "8px 12px",
+                        borderRadius: "6px",
+                        cursor: "pointer",
+                        marginRight: "8px",
+                      }}
                     >
                       Delete
                     </button>

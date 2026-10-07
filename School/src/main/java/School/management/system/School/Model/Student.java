@@ -18,11 +18,9 @@ public class Student {
     private String phone;
     private String status;
 
-    // Constructor ya kawaida
     public Student() {
     }
 
-    // Constructor yenye parameters
     public Student(String admissionNo, String fullName, String className,
                    String gender, String dateOfBirth, String phone, String status) {
 

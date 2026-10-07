@@ -15,22 +15,18 @@ public class StudentService {
         this.studentRepository = studentRepository;
     }
 
-    // Add student
     public Student addStudent(Student student) {
         return studentRepository.save(student);
     }
 
-    // Get all students
     public List<Student> getAllStudents() {
         return studentRepository.findAll();
     }
 
-    // Get student by ID
     public Student getStudentById(Long id) {
         return studentRepository.findById(id).orElse(null);
     }
 
-    // Delete student
     public void deleteStudent(Long id) {
         studentRepository.deleteById(id);
     }

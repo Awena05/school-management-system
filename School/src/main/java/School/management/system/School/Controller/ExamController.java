@@ -16,25 +16,21 @@ public class ExamController {
         this.examService = examService;
     }
 
-    // Add Exam
     @PostMapping
     public Exam addExam(@RequestBody Exam exam) {
         return examService.addExam(exam);
     }
 
-    // Get All Exams
     @GetMapping
     public List<Exam> getAllExams() {
         return examService.getAllExams();
     }
 
-    // Get Exam By ID
     @GetMapping("/{id}")
     public Exam getExamById(@PathVariable Long id) {
         return examService.getExamById(id);
     }
 
-    // Update Exam
     @PutMapping("/{id}")
     public Exam updateExam(
             @PathVariable Long id,
@@ -42,8 +38,6 @@ public class ExamController {
 
         return examService.updateExam(id, exam);
     }
-
-    // Delete Exam
     @DeleteMapping("/{id}")
     public String deleteExam(@PathVariable Long id) {
         examService.deleteExam(id);

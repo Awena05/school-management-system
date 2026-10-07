@@ -1,4 +1,4 @@
-package School.management.system.School.Entity;
+package School.management.system.School.Model;
 
 import jakarta.persistence.*;
 
@@ -11,18 +11,33 @@ public class User {
     private Long id;
 
     @Column(nullable = false, unique = true)
-    private String email;
+    private String zanzibarId;
+
+    @Column(nullable = false, unique = true)
+    private String employeeNumber;
 
     @Column(nullable = false)
+    private String fullName;
+
+    @Column(nullable = true)
     private String password;
 
+    @Column(nullable = true)
     private String role;
 
     public User() {
     }
 
-    public User(String email, String password, String role) {
-        this.email = email;
+    public User(
+            String zanzibarId,
+            String employeeNumber,
+            String fullName,
+            String password,
+            String role) {
+
+        this.zanzibarId = zanzibarId;
+        this.employeeNumber = employeeNumber;
+        this.fullName = fullName;
         this.password = password;
         this.role = role;
     }
@@ -35,12 +50,28 @@ public class User {
         this.id = id;
     }
 
-    public String getEmail() {
-        return email;
+    public String getZanzibarId() {
+        return zanzibarId;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
+    public void setZanzibarId(String zanzibarId) {
+        this.zanzibarId = zanzibarId;
+    }
+
+    public String getEmployeeNumber() {
+        return employeeNumber;
+    }
+
+    public void setEmployeeNumber(String employeeNumber) {
+        this.employeeNumber = employeeNumber;
+    }
+
+    public String getFullName() {
+        return fullName;
+    }
+
+    public void setFullName(String fullName) {
+        this.fullName = fullName;
     }
 
     public String getPassword() {

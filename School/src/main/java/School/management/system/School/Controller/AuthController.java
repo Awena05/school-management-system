@@ -1,9 +1,12 @@
 package School.management.system.School.Controller;
 
-import School.management.system.School.Entity.User;
+import School.management.system.School.Model.User;
 import School.management.system.School.Repository.UserRepository;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
@@ -13,31 +16,158 @@ import java.util.Optional;
 public class AuthController {
 
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
-    public AuthController(UserRepository userRepository) {
+    public AuthController(
+            UserRepository userRepository,
+            PasswordEncoder passwordEncoder) {
+
         this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @PostMapping("/login")
-    public Map<String, Object> login(@RequestBody Map<String, String> loginData) {
+    public ResponseEntity<?> login(
+            @RequestBody LoginRequest request) {
 
-        String email = loginData.get("email");
-        String password = loginData.get("password");
 
-        Optional<User> user = userRepository.findByEmail(email);
+        if (request.getZanzibarId() == null ||
+                request.getZanzibarId().trim().isEmpty()) {
 
-        if (user.isPresent() && user.get().getPassword().equals(password)) {
+            return ResponseEntity
+                    .badRequest()
+                    .body("Zanzibar ID is required");
+        }
+        if (request.getEmployeeNumber() == null ||
+                request.getEmployeeNumber().trim().isEmpty()) {
 
-            return Map.of(
-                    "success", true,
-                    "message", "Login successful",
-                    "role", user.get().getRole()
-            );
+            return ResponseEntity
+                    .badRequest()
+                    .body("Employee Number is required");
+        }
+        Optional<User> userOptional =
+                userRepository.findByZanzibarId(
+                        request.getZanzibarId().trim()
+                );
+        if (userOptional.isEmpty()) {
+
+            return ResponseEntity
+                    .status(401)
+                    .body("Zanzibar ID au Employee Number sio sahihi");
         }
 
-        return Map.of(
-                "success", false,
-                "message", "Invalid email or password"
+        User user = userOptional.get();
+        if (!user.getEmployeeNumber()
+                .equals(request.getEmployeeNumber().trim())) {
+
+            return ResponseEntity
+                    .status(401)
+                    .body("Zanzibar ID au Employee Number sio sahihi");
+        }
+        if (user.getPassword() == null) {
+
+            Map<String, Object> response =
+                    new HashMap<>();
+
+            response.put("success", false);
+            response.put("firstLogin", true);
+            response.put(
+                    "message",
+                    "Please create your password"
+            );
+
+            response.put("id", user.getId());
+            response.put(
+                    "zanzibarId",
+                    user.getZanzibarId()
+            );
+            response.put(
+                    "employeeNumber",
+                    user.getEmployeeNumber()
+            );
+            response.put(
+                    "fullName",
+                    user.getFullName()
+            );
+            response.put(
+                    "role",
+                    user.getRole()
+            );
+
+            return ResponseEntity.ok(response);
+        }
+
+        if (request.getPassword() == null ||
+                request.getPassword().trim().isEmpty()) {
+
+            return ResponseEntity
+                    .badRequest()
+                    .body("Password is required");
+        }
+        if (!passwordEncoder.matches(
+                request.getPassword(),
+                user.getPassword())) {
+
+            return ResponseEntity
+                    .status(401)
+                    .body("Password sio sahihi");
+        }
+
+        Map<String, Object> response =
+                new HashMap<>();
+
+        response.put("success", true);
+        response.put("firstLogin", false);
+
+        response.put("id", user.getId());
+        response.put(
+                "zanzibarId",
+                user.getZanzibarId()
         );
+        response.put(
+                "employeeNumber",
+                user.getEmployeeNumber()
+        );
+        response.put(
+                "fullName",
+                user.getFullName()
+        );
+        response.put(
+                "role",
+                user.getRole()
+        );
+
+        return ResponseEntity.ok(response);
+    }
+
+    public static class LoginRequest {
+
+        private String zanzibarId;
+        private String employeeNumber;
+        private String password;
+
+        public String getZanzibarId() {
+            return zanzibarId;
+        }
+
+        public void setZanzibarId(String zanzibarId) {
+            this.zanzibarId = zanzibarId;
+        }
+
+        public String getEmployeeNumber() {
+            return employeeNumber;
+        }
+
+        public void setEmployeeNumber(String employeeNumber) {
+            this.employeeNumber = employeeNumber;
+        }
+
+        public String getPassword() {
+            return password;
+        }
+
+        public void setPassword(String password) {
+            this.password = password;
+        }
     }
 }

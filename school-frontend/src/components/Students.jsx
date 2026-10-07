@@ -294,17 +294,37 @@ const filteredStudents = students.filter((student) =>
                   <td>{student.phone}</td>
                   <td>{student.status}</td>
                   <td>
+   <button
+                      type="button"
+                      onClick={() => editStudent(student)}
+                      style={{
+                        background: "#2563eb",
+                        color: "white",
+                        border: "none",
+                        padding: "8px 12px",
+                        borderRadius: "6px",
+                        cursor: "pointer",
+                        marginRight: "8px",
+                      }}
+                    >
+                      Edit
+                    </button>
   <button
-    onClick={() => editStudent(student)}
-  >
-    Edit
-  </button>
-
-  <button
-    onClick={() => deleteStudent(student.id)}
-  >
-    Delete
-  </button>
+                      type="button"
+                      onClick={() => deleteStudent(student.id)}
+                      style={{
+                        background: "#dc2626",
+                        color: "white",
+                        border: "none",
+                        padding: "8px 12px",
+                        borderRadius: "6px",
+                        cursor: "pointer",
+                      }}
+                    >
+                      Delete
+                    </button>
+                  
+ 
 </td>
                 </tr>
               ))

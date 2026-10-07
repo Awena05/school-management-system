@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from "react";
 
 function Classes() {
@@ -9,6 +10,7 @@ function Classes() {
   const [classes, setClasses] = useState([]);
   const [form, setForm] = useState(emptyForm);
   const [loading, setLoading] = useState(false);
+  const [editingId, setEditingId] = useState(null);
 
   // Get all classes
   const getClasses = async () => {
@@ -41,14 +43,37 @@ function Classes() {
     }));
   };
 
-  // Add class
-  const addClass = async (e) => {
+  // Edit class
+  const editClass = (schoolClass) => {
+    setEditingId(schoolClass.id);
+
+    setForm({
+      className: schoolClass.className || "",
+      description: schoolClass.description || "",
+    });
+
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
+  };
+
+  // Add or Update class
+  const saveClass = async (e) => {
     e.preventDefault();
     setLoading(true);
 
     try {
-      const response = await fetch("http://localhost:8080/api/classes", {
-        method: "POST",
+      let url = "http://localhost:8080/api/classes";
+      let method = "POST";
+
+      if (editingId !== null) {
+        url = "http://localhost:8080/api/classes/" + editingId;
+        method = "PUT";
+      }
+
+      const response = await fetch(url, {
+        method: method,
         headers: {
           "Content-Type": "application/json",
         },
@@ -57,20 +82,38 @@ function Classes() {
 
       if (!response.ok) {
         const errorMessage = await response.text();
-        throw new Error(errorMessage || "Failed to add class");
+        throw new Error(
+          errorMessage ||
+            (editingId !== null
+              ? "Failed to update class"
+              : "Failed to add class")
+        );
       }
 
+      const wasEditing = editingId !== null;
+
       setForm(emptyForm);
+      setEditingId(null);
 
       await getClasses();
 
-      alert("Class added successfully!");
+      alert(
+        wasEditing
+          ? "Class updated successfully!"
+          : "Class added successfully!"
+      );
     } catch (error) {
-      console.error("Add Class Error:", error);
-      alert("Failed to add class: " + error.message);
+      console.error("Save Class Error:", error);
+      alert("Failed to save class: " + error.message);
     } finally {
       setLoading(false);
     }
+  };
+
+  // Cancel edit
+  const cancelEdit = () => {
+    setForm(emptyForm);
+    setEditingId(null);
   };
 
   // Delete class
@@ -80,11 +123,12 @@ function Classes() {
     }
 
     try {
-      const url = "http://localhost:8080/api/classes/" + id;
-
-      const response = await fetch(url, {
-        method: "DELETE",
-      });
+      const response = await fetch(
+        "http://localhost:8080/api/classes/" + id,
+        {
+          method: "DELETE",
+        }
+      );
 
       if (!response.ok) {
         throw new Error("Failed to delete class");
@@ -109,8 +153,8 @@ function Classes() {
         </div>
       </div>
 
-      {/* Add Class Form */}
-      <form className="student-form" onSubmit={addClass}>
+      {/* Add / Edit Form */}
+      <form className="student-form" onSubmit={saveClass}>
         <input
           type="text"
           name="className"
@@ -129,8 +173,28 @@ function Classes() {
         />
 
         <button type="submit" disabled={loading}>
-          {loading ? "Adding..." : "Add Class"}
+          {loading
+            ? editingId !== null
+              ? "Updating..."
+              : "Adding..."
+            : editingId !== null
+            ? "Update Class"
+            : "Add Class"}
         </button>
+
+        {editingId !== null && (
+          <button
+            type="button"
+            onClick={cancelEdit}
+            style={{
+              marginLeft: "8px",
+              padding: "10px 15px",
+              cursor: "pointer",
+            }}
+          >
+            Cancel
+          </button>
+        )}
       </form>
 
       {/* Classes Table */}
@@ -158,10 +222,35 @@ function Classes() {
                   <td>{schoolClass.id}</td>
                   <td>{schoolClass.className}</td>
                   <td>{schoolClass.description}</td>
+
                   <td>
                     <button
                       type="button"
+                      onClick={() => editClass(schoolClass)}
+                      style={{
+                        background: "#2563eb",
+                        color: "white",
+                        border: "none",
+                        padding: "8px 12px",
+                        borderRadius: "6px",
+                        cursor: "pointer",
+                        marginRight: "8px",
+                      }}
+                    >
+                      Edit
+                    </button>
+
+                    <button
+                      type="button"
                       onClick={() => deleteClass(schoolClass.id)}
+                      style={{
+                        background: "#dc2626",
+                        color: "white",
+                        border: "none",
+                        padding: "8px 12px",
+                        borderRadius: "6px",
+                        cursor: "pointer",
+                      }}
                     >
                       Delete
                     </button>
@@ -177,3 +266,4 @@ function Classes() {
 }
 
 export default Classes;
+
